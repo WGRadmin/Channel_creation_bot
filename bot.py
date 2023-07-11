@@ -1,13 +1,24 @@
 import disnake
 from disnake.ext import commands
-from disnake.ext.commands import slash_command
 from disnake.utils import get
 
 intents = disnake.Intents.default()
-intents.members = True
 intents.message_content = True
 
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+
+
+class MyHelpCommand(commands.MinimalHelpCommand):
+    def __init__(self, **options):
+        super().__init__(**options)
+
+    async def send_pages(self):
+        destination = self.get_destination()
+        for page in self.paginator.pages:
+            await destination.send(page)
+
+
+client.help_command = MyHelpCommand()
 
 
 @client.event
@@ -33,13 +44,23 @@ async def on_member_join(member):
 @client.event
 async def on_ready():
     await client.change_presence(activity=disnake.Game(name="チャンネルを作成"))
-    print(f'{client.user}_has log in!')
+    print(f'準備完了！')
 
 
-# /helloコマンド
-@slash_command(guild_ids=[1127635219474825326], description="起動を確認するコマンドです！")
-async def hello(ctx):
-    await ctx.respond("起動完了です！")
+# 起動確認コマンド
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    # !hello(設定を表示します)
+    if message.content == '!hello':
+        await message.channel.send('Hello World!\n'
+                                   '現在の設定は以下の通りです\n'
+                                   'テキストカテゴリー_個別カテゴリー\n'
+                                   'ボイスカテゴリー_個人vc\n'
+                                   'テキストチャンネルテンプレート_📝｜UserName\n'
+                                   'ボイスチャンネルテンプレート_🔈｜UserName')
 
 
-client.run("youtoken")
+client.run("MTEyNjUwMzE1ODYxMzU0OTEzNw.GO-YAr.mfOXlhcwOBuqVXXTGyftPo5-aCvKaILDIj6LWA")

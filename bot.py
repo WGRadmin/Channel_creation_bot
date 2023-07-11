@@ -63,4 +63,4 @@ async def on_message(message):
                                    'ボイスチャンネルテンプレート_🔈｜UserName')
 
 
-client.run("MTEyNjUwMzE1ODYxMzU0OTEzNw.GO-YAr.mfOXlhcwOBuqVXXTGyftPo5-aCvKaILDIj6LWA")
+client.run("You_token")

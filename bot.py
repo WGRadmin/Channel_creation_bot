@@ -87,4 +87,4 @@ async def on_message(message):
                                    '- ボイスチャンネルテンプレート_🔈｜UserName')
 
 
-client.run("MTEyNjUwMzE1ODYxMzU0OTEzNw.Goy1pd.knDQziDbrh8gEtaWCMWW3YGjkkBQ04YBIeAulM")
+client.run("you token")

@@ -4,11 +4,12 @@ from disnake.ext import commands
 from disnake.utils import get
 
 intents = disnake.Intents.default()
+intents.members = True
 intents.message_content = True
 
 client = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
-CHANNEL_ID = 1128222993550692442  # メッセージを送信するチャンネルのID
+CHANNEL_ID = 1128222993550692442
 
 
 class MyHelpCommand(commands.MinimalHelpCommand):
@@ -26,10 +27,11 @@ client.help_command = MyHelpCommand()
 
 @client.event
 async def on_member_join(member):
+    print(f"{member.name} has joined the server")  # デバッグ用の出力
     guild = member.guild
     text_category = get(guild.categories, name="個別テキスト")
     voice_category = get(guild.categories, name="個人vc")
-    role = get(guild.roles, name="指定したロール")
+    role = get(guild.roles, name="窓口")
     print(f"Role: {role}")
     overwrites = {
         guild.default_role: disnake.PermissionOverwrite(read_messages=False),
@@ -51,14 +53,22 @@ with open('config.json', 'r') as f:
 # log inメッセージ
 @client.event
 async def on_ready():
-    await client.change_presence(activity=disnake.Game(name="w!hello"))
+    await client.change_presence(activity=disnake.Game(name="!wgr"))
     print(f'正常に起動しました')
 
     # 特定のチャンネルにメッセージを送信
     if config.get('send_message_on_startup'):
         channel = client.get_channel(CHANNEL_ID)
         if channel:
-            await channel.send("Botが起動しました！")
+            await channel.send("private/WGR_Botが起動しました！")
+
+
+# 起動停止メッセージ
+@client.event
+async def on_disconnect():
+    channel = client.get_channel(CHANNEL_ID)
+    if channel:
+        await channel.send("Botが停止しました")
 
 
 # 起動確認コマンド
@@ -68,12 +78,13 @@ async def on_message(message):
         return
 
     # !hello(設定を表示します)
-    if message.content == 'w!hello':
-        await message.channel.send('`Hello World!\n'
-                                   '現在の設定は以下の通りです\n'
-                                   'テキストカテゴリー_個別カテゴリー\n'
-                                   'ボイスカテゴリー_個人vc\n'
-                                   'テキストチャンネルテンプレート_📝｜UserName\n'
-                                   'ボイスチャンネルテンプレート_🔈｜UserName`')
+    if message.content == '!wgr':
+        await message.channel.send('`Hello World!`\n'
+                                   '>>> - 現在の設定は以下の通りです\n'
+                                   '- テキストカテゴリー_個別カテゴリー\n'
+                                   '- ボイスカテゴリー_個人vc\n'
+                                   '- テキストチャンネルテンプレート_📝｜UserName\n'
+                                   '- ボイスチャンネルテンプレート_🔈｜UserName')
 
-client.run("YooToken")
+
+client.run("MTEyNjUwMzE1ODYxMzU0OTEzNw.Goy1pd.knDQziDbrh8gEtaWCMWW3YGjkkBQ04YBIeAulM")
